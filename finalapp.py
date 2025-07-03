@@ -250,7 +250,7 @@ def find_images_in_folder(folder):
         for file in files:
             if file.lower().endswith(('.png', '.jpg', '.jpeg')):
                 image_paths.append(os.path.join(root, file))
-    return image_paths
+    return sorted(image_paths)
 
 # Fungsi untuk menampilkan gambar dalam grid dengan scroll
 def display_image_grid(image_paths, labels, columns=4):
