@@ -7,7 +7,9 @@ import os
 import time
 import streamlit.components.v1 as components
 from PIL import Image
-from config import NUTRITION_API_KEY, GEMINI_API_KEY
+
+NUTRITION_API_KEY = os.getenv("NUTRITION_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Load trained CNN model lazily to avoid permission errors
 @st.cache_resource
