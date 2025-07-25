@@ -14,26 +14,57 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # Load trained CNN model lazily to avoid permission errors
 @st.cache_resource
 def load_mobilenet_model():
-    return load_model('mobilenetv2_food_finetune_v2.keras')
+    return load_model('mobilenetv2_food_finetune_100.keras')
 
 model = load_mobilenet_model()
 
 class_names = [
-    'baby_back_ribs', 'baklava', 'beef_tartare', 'beet_salad', 'beignet', 'bibimbap', 
-    'bruschetta', 'caesar_salad', 'cannoli', 'caprese_salad', 'carrot_cake', 'ceviche', 
+    'apple_pie', 'baby_back_ribs', 'baklava', 'beef_tartare', 'beet_salad', 'beignet', 'bibimbap', 'bread_pudding', 'breakfast_burrito', 
+    'bruschetta', 'caesar_salad', 'calamari', 'cannoli', 'caprese_salad', 'carbonara', 'carpaccio', 'carrot_cake', 'ceviche', 
     'cheese_plate', 'cheesecake', 'chicken_curry', 'chicken_quesadilla', 'chicken_wings', 
-    'chocolate_cake', 'churros', 'clam_chowder', 'club_sandwich', 'creme_brulee', 
+    'chocolate_cake', 'chocolate_mousse', 'churros', 'clam_chowder', 'club_sandwich', 'crab_cakes', 'creme_brulee', 
     'cup_cakes', 'deviled_eggs', 'donuts', 'dumplings', 'edamame', 'eggs_benedict', 
-    'escargots', 'falafel', 'filet_mignon', 'fish_and_chips', 'french_fries', 
-    'french_onion_soup', 'french_toast', 'fried_chicken', 'fried_fish', 'fried_rice', 'garlic_bread', 'gnocchi', 
-    'greek_salad', 'guacamole', 'gyoza', 'hamburger', 'hot_and_sour_soup', 'hot_dog', 
+    'escargots', 'falafel', 'filet_mignon', 'fish_and_chips', 'foie_gras', 'french_fries', 
+    'french_onion_soup', 'french_toast', 'fried_chicken', 'fried_fish', 'fried_rice', 'frozen_yogurt', 'garlic_bread', 'gnocchi', 
+    'greek_salad', 'grilled_cheese_sandwich', 'grilled_salmon', 'guacamole', 'gyoza', 'hamburger', 'hot_and_sour_soup', 'hot_dog', 'huevos_rancheros', 'hummus', 
     'ice_cream', 'lasagna', 'lobster_bisque', 'macaroni_and_cheese', 'macarons', 
-    'miso_soup', 'mussels', 'nachos', 'onion_rings', 'oysters', 'pad_thai', 'paella', 
-    'pancakes', 'panna_cotta', 'peking_duck', 'pho', 'pizza', 'poutine', 'prime_rib', 
-    'pulled_pork_sandwich', 'ramen', 'rendang', 'risotto', 'samosa', 'sashimi', 'satay', 'seaweed_salad', 
-    'shrimp_and_grits', 'spaghetti_bolognese', 'spring_rolls', 'strawberry_shortcake', 
-    'sushi', 'tiramisu', 'waffles'
+    'miso_soup', 'mussels', 'nachos', 'omelette', 'onion_rings', 'oysters', 'pad_thai', 'paella', 
+    'pancakes', 'panna_cotta', 'peking_duck', 'pho', 'pizza', 'pork_chop', 'poutine', 'prime_rib', 
+    'pulled_pork_sandwich', 'ramen', 'ravioli', 'rendang', 'risotto', 'samosa', 'sashimi', 'satay', 'scallops', 'seaweed_salad', 
+    'shrimp_and_grits', 'spaghetti_bolognese', 'spring_rolls', 'steak', 'strawberry_shortcake', 
+    'sushi', 'tacos', 'tiramisu', 'waffles'
 ]
+
+def translate_food_name(name):
+    translation_dict = {
+    'apple_pie': 'Pai Apel', 'baby_back_ribs': 'Iga Panggang', 'baklava': 'Baklava', 'beef_tartare': 'Tartar Daging Sapi',
+    'beet_salad': 'Salad Bit', 'beignet': 'Roti Goreng Prancis', 'bibimbap': 'Bibimbap', 'bread_pudding': 'Puding Roti', 'breakfast_burrito': 'Burrito Sarapan',
+    'bruschetta': 'Bruschetta', 'caesar_salad': 'Salad Caesar', 'calamari': 'Calamari', 'cannoli': 'Cannoli',
+    'caprese_salad': 'Salad Caprese', 'carbonara': 'Spageti Carbonara', 'carpaccio': 'Carpaccio', 'carrot_cake': 'Kue Wortel', 'ceviche': 'Ceviche',
+    'cheese_plate': 'Piring Keju', 'cheesecake': 'Kue Keju', 'chicken_curry': 'Kari Ayam',
+    'chicken_quesadilla': 'Quesadilla Ayam', 'chicken_wings': 'Sayap Ayam', 'chocolate_cake': 'Kue Coklat', 'chocolate_mousse': 'Coklat Mousse',
+    'churros': 'Churros', 'clam_chowder': 'Sup Krim Kerang', 'club_sandwich': 'Sandwich Klub', 'crab_cakes': 'Kue Kepiting',
+    'creme_brulee': 'Creme Brulee', 'cup_cakes': 'Kue Cangkir', 'deviled_eggs': 'Telur Isi',
+    'donuts': 'Donat', 'dumplings': 'Pangsit', 'edamame': 'Kedelai Jepang',
+    'eggs_benedict': 'Telur Benedict', 'escargots': 'Siput', 'falafel': 'Falafel',
+    'filet_mignon': 'Daging Sapi Filet', 'fish_and_chips': 'Ikan dan Kentang Goreng', 'foie_gras': 'Foie Gras', 'french_fries': 'Kentang Goreng',
+    'french_onion_soup': 'Sup Bawang Prancis', 'french_toast': 'Roti Panggang Prancis', 'fried_chicken': 'Ayam Goreng', 'fried_fish': 'Ikan Goreng', 'fried_rice': 'Nasi Goreng', 'frozen_yogurt': 'Yogurt Beku',
+    'garlic_bread': 'Roti Bawang Putih', 'gnocchi': 'Gnocchi', 'greek_salad': 'Salad Yunani', 'grilled_cheese_sandwich' : 'Sandwich Keju Panggang', 'grilled_salmon': 'Salmon Panggang',
+    'guacamole': 'Guacamole', 'gyoza': 'Gyoza', 'hamburger': 'Hamburger',
+    'hot_and_sour_soup': 'Sup Asam Pedas', 'hot_dog': 'Hot Dog', 'huevos_rancheros': 'Huevos Rancheros', 'hummus': 'Hummus', 'ice_cream': 'Es Krim',
+    'lasagna': 'Lasagna', 'lobster_bisque': 'Lobster Bisque', 'macaroni_and_cheese': 'Makaroni dan Keju',
+    'macarons': 'Makaron', 'miso_soup': 'Sup Miso', 'mussels': 'Kerang',
+    'nachos': 'Nachos', 'omelette': 'Omelet', 'onion_rings': 'Cincin Bawang', 'oysters': 'Tiram',
+    'pad_thai': 'Pad Thai', 'paella': 'Paella', 'pancakes': 'Panekuk',
+    'panna_cotta': 'Panna Cotta', 'peking_duck': 'Bebek Peking', 'pho': 'Pho',
+    'pizza': 'Pizza', 'pork_chop': 'Potongan Daging Babi', 'poutine': 'Poutine', 'prime_rib': 'Iga Utama',
+    'pulled_pork_sandwich': 'Sandwich Babi Suwir', 'ramen': 'Ramen', 'ravioli': 'Ravioli', 'rendang': 'Rendang', 'risotto': 'Risotto',
+    'samosa': 'Samosa', 'sashimi': 'Sashimi', 'satay': 'Sate', 'scallops': 'Simping', 'seaweed_salad': 'Salad Rumput Laut',
+    'shrimp_and_grits': 'Udang dan Bubur Jagung', 'spaghetti_bolognese': 'Spageti Bolognese', 'spring_rolls': 'Lumpia', 'steak': 'Steak',
+    'strawberry_shortcake': 'Kue Stroberi', 'sushi': 'Sushi', 'tacos': 'Taco', 'tiramisu': 'Tiramisu',
+    'waffles': 'Wafel'
+    }
+    return translation_dict.get(name, name)
 
 # === Gemini integration (deferred to avoid Keras conflict) ===
 @st.cache_resource
@@ -44,7 +75,9 @@ def get_gemini_model():
 
 # === Sidebar Chatbot Gizi ===
 st.sidebar.header("🧠 Chatbot Gizi (Gemini)")
-selected_food = st.sidebar.selectbox("Pilih makanan (dari 80 kelas):", class_names)
+translated_names = [f"{translate_food_name(name)} ({name.replace('_', ' ').title()})" for name in class_names]
+selected_combined = st.sidebar.selectbox("Pilih makanan:", translated_names, placeholder="Pilih Dari 100 Makanan Berikut")
+selected_food = class_names[translated_names.index(selected_combined)]
 porsi = 100
 user_q = st.sidebar.text_area("Tanyakan sesuatu:", placeholder="Contoh: Apakah ini cocok untuk penderita kolesterol?")
 tanya = st.sidebar.button("Tanya Chatbot")
@@ -63,12 +96,12 @@ def skala_nutrisi(data_100g, gram):
         'calories': to_float(data_100g.get('calories')) * faktor,
         'fat_total_g': to_float(data_100g.get('fat_total_g')) * faktor,
         'fat_saturated_g': to_float(data_100g.get('fat_saturated_g')) * faktor,
-        'sugar_g': to_float(data_100g.get('sugar_g')) * faktor,
-        'cholesterol_mg': to_float(data_100g.get('cholesterol_mg')) * faktor,
         'sodium_mg': to_float(data_100g.get('sodium_mg')) * faktor,
-        'fiber_g': to_float(data_100g.get('fiber_g')) * faktor,
-        'carbohydrates_total_g': to_float(data_100g.get('carbohydrates_total_g')) * faktor,
         'potassium_mg': to_float(data_100g.get('potassium_mg')) * faktor,
+        'cholesterol_mg': to_float(data_100g.get('cholesterol_mg')) * faktor,
+        'carbohydrates_total_g': to_float(data_100g.get('carbohydrates_total_g')) * faktor,
+        'fiber_g': to_float(data_100g.get('fiber_g')) * faktor,
+        'sugar_g': to_float(data_100g.get('sugar_g')) * faktor,
     }
 
 # Fungsi menghitung batas sehat berdasarkan porsi
@@ -78,9 +111,9 @@ def hitung_batas_sehat(gram):
     return {
         'fat_total_g': 11 * faktor,
         'fat_saturated_g': 4 * faktor,
-        'sugar_g': 8 * faktor,
         'sodium_mg': 333 * faktor,
-        'cholesterol_mg': 50 * faktor
+        'cholesterol_mg': 50 * faktor,
+        'sugar_g': 8 * faktor
     }
 
 if tanya and user_q:
@@ -98,19 +131,19 @@ if tanya and user_q:
         gizi_lines = []
         if gizi['fat_total_g']: gizi_lines.append(f"- Lemak total: {gizi['fat_total_g']:.2f} g")
         if gizi['fat_saturated_g']: gizi_lines.append(f"- Lemak jenuh: {gizi['fat_saturated_g']:.2f} g")
-        if gizi['sugar_g']: gizi_lines.append(f"- Gula: {gizi['sugar_g']:.2f} g")
         if gizi['sodium_mg']: gizi_lines.append(f"- Natrium: {gizi['sodium_mg']:.2f} mg")
-        if gizi['cholesterol_mg']: gizi_lines.append(f"- Kolesterol: {gizi['cholesterol_mg']:.2f} mg")
-        if gizi['fiber_g']: gizi_lines.append(f"- Serat: {gizi['fiber_g']:.2f} g")
-        if gizi['carbohydrates_total_g']: gizi_lines.append(f"- Karbohidrat: {gizi['carbohydrates_total_g']:.2f} g")
         if gizi['potassium_mg']: gizi_lines.append(f"- Kalium: {gizi['potassium_mg']:.2f} mg")
+        if gizi['cholesterol_mg']: gizi_lines.append(f"- Kolesterol: {gizi['cholesterol_mg']:.2f} mg")
+        if gizi['carbohydrates_total_g']: gizi_lines.append(f"- Karbohidrat: {gizi['carbohydrates_total_g']:.2f} g")
+        if gizi['fiber_g']: gizi_lines.append(f"- Serat: {gizi['fiber_g']:.2f} g")
+        if gizi['sugar_g']: gizi_lines.append(f"- Gula: {gizi['sugar_g']:.2f} g")
 
         batas_lines = [
             f"- Lemak total < {batas['fat_total_g']:.2f} g",
             f"- Lemak jenuh < {batas['fat_saturated_g']:.2f} g",
-            f"- Gula < {batas['sugar_g']:.2f} g",
             f"- Natrium < {batas['sodium_mg']:.2f} mg",
-            f"- Kolesterol < {batas['cholesterol_mg']:.2f} mg"
+            f"- Kolesterol < {batas['cholesterol_mg']:.2f} mg",
+            f"- Gula < {batas['sugar_g']:.2f} g"
         ]
 
         catatan_pedoman = f"""
@@ -176,37 +209,6 @@ if tanya and user_q:
             st.sidebar.error(f"Gagal memanggil Gemini API: {e}")
     else:
         st.sidebar.error("Gagal mengambil data dari API Ninjas")
-
-def translate_food_name(name):
-    translation_dict = {
-    'baby_back_ribs': 'Iga Panggang', 'baklava': 'Baklava', 'beef_tartare': 'Tartar Daging Sapi',
-    'beet_salad': 'Salad Bit', 'beignet': 'Roti Goreng Prancis', 'bibimbap': 'Bibimbap',
-    'bruschetta': 'Bruschetta', 'caesar_salad': 'Salad Caesar', 'cannoli': 'Cannoli',
-    'caprese_salad': 'Salad Caprese', 'carrot_cake': 'Kue Wortel', 'ceviche': 'Ceviche',
-    'cheese_plate': 'Piring Keju', 'cheesecake': 'Kue Keju', 'chicken_curry': 'Kari Ayam',
-    'chicken_quesadilla': 'Quesadilla Ayam', 'chicken_wings': 'Sayap Ayam', 'chocolate_cake': 'Kue Coklat',
-    'churros': 'Churros', 'clam_chowder': 'Sup Krim Kerang', 'club_sandwich': 'Sandwich Klub',
-    'creme_brulee': 'Creme Brulee', 'cup_cakes': 'Kue Cangkir', 'deviled_eggs': 'Telur Isi',
-    'donuts': 'Donat', 'dumplings': 'Pangsit', 'edamame': 'Kedelai Jepang',
-    'eggs_benedict': 'Telur Benedict', 'escargots': 'Siput', 'falafel': 'Falafel',
-    'filet_mignon': 'Daging Sapi Filet', 'fish_and_chips': 'Ikan dan Kentang Goreng', 'french_fries': 'Kentang Goreng',
-    'french_onion_soup': 'Sup Bawang Prancis', 'french_toast': 'Roti Panggang Prancis', 'fried_chicken': 'Ayam Goreng', 'fried_fish': 'Ikan Goreng', 'fried_rice': 'Nasi Goreng',
-    'garlic_bread': 'Roti Bawang Putih', 'gnocchi': 'Gnocchi', 'greek_salad': 'Salad Yunani',
-    'guacamole': 'Guacamole', 'gyoza': 'Gyoza', 'hamburger': 'Hamburger',
-    'hot_and_sour_soup': 'Sup Asam Pedas', 'hot_dog': 'Hot Dog', 'ice_cream': 'Es Krim',
-    'lasagna': 'Lasagna', 'lobster_bisque': 'Lobster Bisque', 'macaroni_and_cheese': 'Makaroni dan Keju',
-    'macarons': 'Makaron', 'miso_soup': 'Sup Miso', 'mussels': 'Kerang',
-    'nachos': 'Nachos', 'onion_rings': 'Cincin Bawang', 'oysters': 'Tiram',
-    'pad_thai': 'Pad Thai', 'paella': 'Paella', 'pancakes': 'Panekuk',
-    'panna_cotta': 'Panna Cotta', 'peking_duck': 'Bebek Peking', 'pho': 'Pho',
-    'pizza': 'Pizza', 'poutine': 'Poutine', 'prime_rib': 'Iga Utama',
-    'pulled_pork_sandwich': 'Sandwich Babi Suwir', 'ramen': 'Ramen', 'rendang': 'Rendang', 'risotto': 'Risotto',
-    'samosa': 'Samosa', 'sashimi': 'Sashimi', 'satay': 'Sate', 'seaweed_salad': 'Salad Rumput Laut',
-    'shrimp_and_grits': 'Udang dan Bubur Jagung', 'spaghetti_bolognese': 'Spageti Bolognese', 'spring_rolls': 'Lumpia',
-    'strawberry_shortcake': 'Kue Stroberi', 'sushi': 'Sushi', 'tiramisu': 'Tiramisu',
-    'waffles': 'Wafel'
-    }
-    return translation_dict.get(name, name)
 
 # Menyiapkan antarmuka Streamlit
 st.title('Website Klasifikasi Makanan dan Informasi Nutrisi Berbasis Machine Learning')
@@ -277,24 +279,24 @@ def display_image_grid(image_paths, labels, columns=4):
 image_folder = 'food_images'
 image_paths = find_images_in_folder(image_folder)
 labels = [
-    'Iga Punggung (Baby Back Ribs)', 'Baklava', 'Tartar Daging Sapi (Beef Tartare)', 'Salad Bit (Beet Salad)', 
-    'Roti Goreng Prancis (Beignet)', 'Bibimbap', 'Bruschetta', 'Salad Caesar (Caesar Salad)', 'Cannoli', 
-    'Salad Caprese (Caprese Salad)', 'Kue Wortel (Carrot Cake)', 'Ceviche', 'Kue Keju (Cheesecake)', 
+    'Pai Apel (Apple Pie)', 'Iga Punggung (Baby Back Ribs)', 'Baklava', 'Tartar Daging Sapi (Beef Tartare)', 'Salad Bit (Beet Salad)', 
+    'Roti Goreng Prancis (Beignet)', 'Bibimbap', 'Puding Roti (Bread Pudding)', 'Burrito Sarapan (Breakfast Burrito)', 'Bruschetta', 'Salad Caesar (Caesar Salad)', 'Calamari', 'Cannoli', 
+    'Salad Caprese (Caprese Salad)', 'Spageti Carbonara (Carbonara)', 'Carpaccio', 'Kue Wortel (Carrot Cake)', 'Ceviche', 'Kue Keju (Cheesecake)', 
     'Piring Keju (Cheese Plate)', 'Kari Ayam (Chicken Curry)', 'Quesadilla Ayam (Chicken Quesadilla)', 
-    'Sayap Ayam (Chicken Wings)', 'Kue Coklat (Chocolate Cake)', 'Churros', 'Sup Krim Kerang (Clam Chowder)', 
-    'Sandwich Klub (Club Sandwich)', 'Creme Brulee', 'Kue Cangkir (Cup Cakes)', 'Telur Isi (Deviled Eggs)', 
+    'Sayap Ayam (Chicken Wings)', 'Kue Coklat (Chocolate Cake)', 'Coklat Mousse (Chocolate Mousse)', 'Churros', 'Sup Krim Kerang (Clam Chowder)', 
+    'Sandwich Klub (Club Sandwich)', 'Kue Kepiting (Crab Cakes)', 'Creme Brulee', 'Kue Cangkir (Cup Cakes)', 'Telur Isi (Deviled Eggs)', 
     'Donat (Donuts)', 'Pangsit (Dumplings)', 'Kedelai Jepang (Edamame)', 'Telur Benedict (Eggs Benedict)', 
-    'Siput (Escargots)', 'Falafel', 'Daging Sapi Filet (Filet Mignon)', 'Ikan Dan Kentang Goreng (Fish And Chips)', 
+    'Siput (Escargots)', 'Falafel', 'Daging Sapi Filet (Filet Mignon)', 'Ikan Dan Kentang Goreng (Fish And Chips)', 'Foie Gras',
     'Kentang Goreng (French Fries)', 'Sup Bawang Prancis (French Onion Soup)', 'Roti Panggang Prancis (French Toast)', 'Ayam Goreng (Fried Chicken)', 'Ikan Goreng (Fried Fish)',
-    'Nasi Goreng (Fried Rice)', 'Roti Bawang Putih (Garlic Bread)', 'Gnocchi', 'Salad Yunani (Greek Salad)', 
-    'Guacamole', 'Gyoza', 'Hamburger', 'Sup Asam Pedas (Hot And Sour Soup)', 'Hot Dog', 'Es Krim (Ice Cream)', 
+    'Nasi Goreng (Fried Rice)', 'Yogurt Beku (Frozen Yogurt)', 'Roti Bawang Putih (Garlic Bread)', 'Gnocchi', 'Salad Yunani (Greek Salad)', 'Sandwich Keju Panggang (Grilled Cheese Sandwich)', 'Salmon Panggang (Grilled Salmon)',
+    'Guacamole', 'Gyoza', 'Hamburger', 'Sup Asam Pedas (Hot And Sour Soup)', 'Hot Dog', 'Huevos Rancheros', 'Hummus', 'Es Krim (Ice Cream)', 
     'Lasagna', 'Lobster Bisque', 'Makaroni Dan Keju (Macaroni And Cheese)', 'Makaron (Macarons)', 
-    'Sup Miso (Miso Soup)', 'Kerang (Mussels)', 'Nachos', 'Cincin Bawang (Onion Rings)', 'Tiram (Oysters)', 
-    'Pad Thai', 'Paella', 'Panekuk (Pancakes)', 'Panna Cotta', 'Bebek Peking (Peking Duck)', 'Pho', 'Pizza', 
-    'Poutine', 'Iga Utama (Prime Rib)', 'Sandwich Babi Suwir (Pulled Pork Sandwich)', 'Ramen', 'Rendang', 'Risotto', 
-    'Samosa', 'Sashimi', 'Sate (Satay)', 'Salad Rumput Laut (Seaweed Salad)', 'Udang Dan Bubur Jagung (Shrimp And Grits)', 
-    'Spageti Bolognese (Spaghetti Bolognese)', 'Lumpia (Spring Rolls)', 'Kue Stroberi (Strawberry Shortcake)', 
-    'Sushi', 'Tiramisu', 'Wafel (Waffles)'
+    'Sup Miso (Miso Soup)', 'Kerang (Mussels)', 'Nachos', 'Omelet (Omelette)', 'Cincin Bawang (Onion Rings)', 'Tiram (Oysters)', 
+    'Pad Thai', 'Paella', 'Panekuk (Pancakes)', 'Panna Cotta', 'Bebek Peking (Peking Duck)', 'Pho', 'Pizza', 'Potongan Daging Babi (Pork Chop)',
+    'Poutine', 'Iga Utama (Prime Rib)', 'Sandwich Babi Suwir (Pulled Pork Sandwich)', 'Ramen', 'Ravioli', 'Rendang', 'Risotto', 
+    'Samosa', 'Sashimi', 'Sate (Satay)', 'Simping (Scallops)', 'Salad Rumput Laut (Seaweed Salad)', 'Udang Dan Bubur Jagung (Shrimp And Grits)', 
+    'Spageti Bolognese (Spaghetti Bolognese)', 'Lumpia (Spring Rolls)', 'Steak', 'Kue Stroberi (Strawberry Shortcake)', 
+    'Sushi', 'Tacos', 'Tiramisu', 'Wafel (Waffles)'
 ]
 
 # Menampilkan grid gambar
