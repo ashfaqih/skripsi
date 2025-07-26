@@ -14,7 +14,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 # Load trained CNN model lazily to avoid permission errors
 @st.cache_resource
 def load_mobilenet_model():
-    return load_model('mobilenetv2_food_finetune_100.keras')
+    return load_model('final_mobilenetv2_food_finetune_100.keras')
 
 model = load_mobilenet_model()
 
