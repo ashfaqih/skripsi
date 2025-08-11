@@ -82,7 +82,6 @@ porsi = 100
 user_q = st.sidebar.text_area("Tanyakan sesuatu:", placeholder="Contoh: Apakah ini cocok untuk penderita kolesterol?")
 tanya = st.sidebar.button("Tanya Chatbot")
 
-# Fungsi skala nutrisi berdasarkan berat porsi
 def skala_nutrisi(data_100g, gram):
     def to_float(x):
         try:
@@ -464,4 +463,5 @@ if uploaded_file is not None:
         else:
             st.write(f"Gagal mengambil informasi nutrisi: {response.status_code}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
