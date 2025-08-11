@@ -84,8 +84,6 @@ tanya = st.sidebar.button("Tanya Chatbot")
 
 # Fungsi skala nutrisi berdasarkan berat porsi
 def skala_nutrisi(data_100g, gram):
-    faktor = gram / 100
-
     def to_float(x):
         try:
             return float(x)
@@ -93,27 +91,25 @@ def skala_nutrisi(data_100g, gram):
             return 0.0
 
     return {
-        'calories': to_float(data_100g.get('calories')) * faktor,
-        'fat_total_g': to_float(data_100g.get('fat_total_g')) * faktor,
-        'fat_saturated_g': to_float(data_100g.get('fat_saturated_g')) * faktor,
-        'sodium_mg': to_float(data_100g.get('sodium_mg')) * faktor,
-        'potassium_mg': to_float(data_100g.get('potassium_mg')) * faktor,
-        'cholesterol_mg': to_float(data_100g.get('cholesterol_mg')) * faktor,
-        'carbohydrates_total_g': to_float(data_100g.get('carbohydrates_total_g')) * faktor,
-        'fiber_g': to_float(data_100g.get('fiber_g')) * faktor,
-        'sugar_g': to_float(data_100g.get('sugar_g')) * faktor,
+        'calories': to_float(data_100g.get('calories')),
+        'fat_total_g': to_float(data_100g.get('fat_total_g')),
+        'fat_saturated_g': to_float(data_100g.get('fat_saturated_g')),
+        'sodium_mg': to_float(data_100g.get('sodium_mg')),
+        'potassium_mg': to_float(data_100g.get('potassium_mg')),
+        'cholesterol_mg': to_float(data_100g.get('cholesterol_mg')),
+        'carbohydrates_total_g': to_float(data_100g.get('carbohydrates_total_g')),
+        'fiber_g': to_float(data_100g.get('fiber_g')),
+        'sugar_g': to_float(data_100g.get('sugar_g')),
     }
-
-# Fungsi menghitung batas sehat berdasarkan porsi
 
 def hitung_batas_sehat(gram):
     faktor = gram / 100
     return {
-        'fat_total_g': 11 * faktor,
-        'fat_saturated_g': 4 * faktor,
-        'sodium_mg': 333 * faktor,
-        'cholesterol_mg': 50 * faktor,
-        'sugar_g': 8 * faktor
+        'fat_total_g': 11,
+        'fat_saturated_g': 4,
+        'sodium_mg': 333,
+        'cholesterol_mg': 50,
+        'sugar_g': 8
     }
 
 if tanya and user_q:
@@ -468,3 +464,4 @@ if uploaded_file is not None:
         else:
             st.write(f"Gagal mengambil informasi nutrisi: {response.status_code}")
         st.markdown("</div>", unsafe_allow_html=True)
+
