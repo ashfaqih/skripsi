@@ -108,7 +108,7 @@ def hitung_batas_sehat(gram):
         'fat_saturated_g': 4,
         'sodium_mg': 333,
         'cholesterol_mg': 50,
-        'sugar_g': 8
+        'sugar_g': 5
     }
 
 if tanya and user_q:
@@ -162,7 +162,7 @@ if tanya and user_q:
 
         Tambahan:
         - Serat dianggap sangat cukup jika > 8g, cukup jika > 4g, dan hampir cukup jika > 2g.
-        - Karbohidrat dianggap sangat cukup jika > 75g, cukup jika > 37.5g, hampir cukup jika > 18.75g.
+        - Karbohidrat dianggap sangat cukup jika > 108g, cukup jika > 75g, hampir cukup jika > 37.5g.
         - Kalium dianggap sangat cukup jika > 1167mg, cukup jika > 583mg, hampir cukup jika > 292mg.
         """
 
@@ -313,7 +313,7 @@ st.subheader('Parameter Kesehatan:')
 st.write("""
 Status kesehatan ditentukan berdasarkan pedoman dari parameter diet sehat WHO. Sebuah makanan dianggap sehat 
 jika memenuhi ambang batas tertentu untuk lemak, lemak jenuh, natrium, kolesterol, dan gula. Parameter ini diperoleh dari nilai 
-asupan harian yang disarankan, dibagi tiga untuk mewakili makanan sehari-hari, dan kemudian dibagi dua untuk memastikan perkiraan konservatif per porsi. 
+asupan harian yang disarankan, dibagi tiga untuk mewakili makanan sehari-hari, dan kemudian dibagi dua untuk memastikan perkiraan konservatif per porsi. Kemudian parameter kesehatan dan keterangan tambahan yang dibuat sudah dievaluasi oleh dokter spesialis gizi klinik.
 
 Berikut adalah sumber dan perhitungan yang digunakan:
 - [Pedoman Diet Kalori HaloDoc](https://www.halodoc.com/artikel/catat-ini-jumlah-minimal-kalori-yang-harus-dipenuhi-saat-diet): 
@@ -336,11 +336,11 @@ Dengan menggunakan pedoman ini, parameter untuk porsi yang sehat adalah:
 - **Lemak Jenuh**: Kurang dari 4g
 - **Natrium**: Kurang dari 333mg
 - **Kolesterol**: Kurang dari 50mg
-- **Gula**: Kurang dari 8g
+- **Gula**: Kurang dari 5g
          
 Dengan parameter keterangan tambahan yaitu:
 - **Kalium**:  dianggap sangat cukup jika lebih dari 1167 miligram, cukup jika lebih dari 583 miligram, dan hampir cukup jika lebih dari 292 miligram.
-- **Karbohidrat**: dianggap sangat cukup jika lebih dari 75 gram, cukup jika lebih dari 37,5 gram, dan hampir cukup jika lebih dari 18,75 gram.
+- **Karbohidrat**: dianggap sangat cukup jika lebih dari 108 gram, cukup jika lebih dari 75 gram, dan hampir cukup jika lebih dari 37,5 gram.
 - **Serat**: dianggap sangat cukup jika lebih dari 8 gram, cukup jika lebih dari 4 gram, dan hampir cukup jika lebih dari 2 gram
 """)
 
@@ -426,7 +426,7 @@ if uploaded_file is not None:
                     reasons.append("Natrium")
                 if cholesterol >= 50:
                     reasons.append("Kolesterol")
-                if sugar >= 8:
+                if sugar >= 5:
                     reasons.append("Gula")
                     
                 if health_status:
@@ -444,11 +444,11 @@ if uploaded_file is not None:
                 elif fiber > 2:
                     st.write("Serat pada makanan ini hampir cukup untuk kebutuhan sehari-hari.")
                     
-                if carbohydrates > 75:
+                if carbohydrates > 108:
                     st.write("Karbohidrat pada makanan ini sudah sangat cukup untuk kebutuhan sehari-hari.")
-                elif carbohydrates > 37.5:
+                elif carbohydrates > 75:
                     st.write("Karbohidrat pada makanan ini sudah cukup untuk kebutuhan sehari-hari.")
-                elif carbohydrates > 18.75:
+                elif carbohydrates > 37.5:
                     st.write("Karbohidrat pada makanan ini hampir cukup untuk kebutuhan sehari-hari.")
                     
                 if potassium > 1167:
@@ -463,5 +463,6 @@ if uploaded_file is not None:
         else:
             st.write(f"Gagal mengambil informasi nutrisi: {response.status_code}")
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
